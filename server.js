@@ -9,6 +9,8 @@ import PlaneRoute from "./Route/PlaneRoute.js";
 import DepositeRoute from "./Route/DepositeRoute.js";
 import DepositAccounteRoute from "./Route/DepositeAccountRoute.js";
 import CashOutRoute from "./Route/CashOutRoute.js";
+import AdvanceRoute from "./Route/AdvanceRoute.js";
+
 const app = express();
 
 dotenv.config();
@@ -25,6 +27,7 @@ app.use("/api/v1/plane", PlaneRoute);
 app.use("/api/v1/deposite", DepositeRoute);
 app.use("/api/v1/depositeaccount", DepositAccounteRoute);
 app.use("/api/v1/cashout", CashOutRoute);
+app.use("/api/v1/advance", AdvanceRoute);
 
 app.get("/", (req, res) => {
   res.send("Welcome to web");
