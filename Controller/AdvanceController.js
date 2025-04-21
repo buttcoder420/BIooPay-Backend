@@ -1,4 +1,5 @@
 import AdvanceModel from "../Model/AdvanceModel.js";
+import UserModel from "../Model/UserModel.js";
 
 // 1. User applies for advance
 
@@ -81,25 +82,39 @@ export const getAllAdvanceRequests = async (req, res) => {
 };
 
 // 4. Admin update status and remarks
+// 4. Admin update status and remarks
 export const updateAdvanceStatus = async (req, res) => {
   try {
     const { id } = req.params;
-    const { status, adminRemarks } = req.body;
+    const { status, remarks } = req.body;
 
     // Validate status
     if (!["pending", "approved", "rejected"].includes(status)) {
       return res.status(400).json({ message: "Invalid status" });
     }
 
-    const updatedAdvance = await AdvanceModel.findByIdAndUpdate(
-      id,
-      { status, adminRemarks },
-      { new: true }
-    ).populate("user", "name email");
+    const updatedAdvance = await AdvanceModel.findById(id).populate("user");
 
     if (!updatedAdvance) {
       return res.status(404).json({ message: "Advance request not found" });
     }
+
+    // Agar approve hua to user ki earnings update karo
+    if (status === "approved") {
+      const user = await UserModel.findById(updatedAdvance.user._id);
+
+      if (user) {
+        const amount = updatedAdvance.calculatedAdvanceAmount || 0;
+        user.earnings += amount;
+        user.TotalEarnings += amount;
+        await user.save();
+      }
+    }
+
+    // Update advance request
+    updatedAdvance.status = status;
+    updatedAdvance.remarks = remarks;
+    await updatedAdvance.save();
 
     res.status(200).json({
       message: "Advance request updated",
