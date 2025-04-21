@@ -18,7 +18,7 @@ const advancePromotionSchema = new mongoose.Schema(
     },
     calculatedAdvanceAmount: {
       type: Number,
-      required: true,
+      // ❗ NOT required anymore, because it will be auto-calculated in pre-save
     },
     status: {
       type: String,
@@ -42,7 +42,7 @@ const advancePromotionSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Auto-set advance amount based on team category
+// Auto-set calculatedAdvanceAmount based on team category
 advancePromotionSchema.pre("save", function (next) {
   switch (this.teamCategory) {
     case "1-20":
@@ -63,4 +63,5 @@ advancePromotionSchema.pre("save", function (next) {
   next();
 });
 
-export default mongoose.model("advance", advancePromotionSchema);
+const AdvanceModel = mongoose.model("Advance", advancePromotionSchema);
+export default AdvanceModel;
