@@ -1,14 +1,15 @@
 import AdvanceModel from "../Model/AdvanceModel.js";
 
 // 1. User applies for advance
+
 export const applyForAdvance = async (req, res) => {
   try {
-    const { teamSizeAtApplication, amountRequested, userComment } = req.body;
+    const { teamSizeAtApplication, userComment } = req.body;
     const userId = req.user._id;
 
-    // Validate amount
-    if (amountRequested <= 0) {
-      return res.status(400).json({ message: "Invalid amount requested" });
+    // Validate team size
+    if (teamSizeAtApplication <= 0) {
+      return res.status(400).json({ message: "Invalid team size" });
     }
 
     // Determine team category
@@ -23,7 +24,6 @@ export const applyForAdvance = async (req, res) => {
       user: userId,
       teamSizeAtApplication,
       teamCategory,
-      amountRequested,
       userComment,
     });
 
