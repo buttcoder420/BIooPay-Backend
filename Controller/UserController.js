@@ -144,6 +144,7 @@ export const verifyEmail = async (req, res) => {
   return res.status(200).json({ success: true, message: "Email verified" });
 };
 // ---------------- LOGIN -------------------
+
 export const loginUser = async (req, res) => {
   try {
     const { identifier, password } = req.body;
@@ -184,12 +185,14 @@ export const loginUser = async (req, res) => {
         message: "Invalid credentials",
       });
     }
+
     if (user.accountStatus === "suspended" || user.accountStatus === "banned") {
       return res.status(403).json({
         success: false,
         message: `Your account is ${user.accountStatus}. Please contact support.`,
       });
     }
+
     // 5. Generate JWT Token
     const token = JWT.sign(
       {
@@ -197,7 +200,7 @@ export const loginUser = async (req, res) => {
         role: user.role, // Include role in token if needed for authorization
       },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "7d" } // Token will expire in 7 days
     );
 
     // 6. Update Last Login
