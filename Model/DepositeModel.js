@@ -29,6 +29,10 @@ const depositSchema = new mongoose.Schema(
           `${props.value} is ncot a valid transaction ID! Only numbers are allowed.`,
       },
     },
+    image: {
+      type: String,
+      required: true,
+    },
     amount: {
       type: Number,
       required: true,
