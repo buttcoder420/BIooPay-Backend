@@ -20,7 +20,7 @@ const generateReferralCode = () => {
 };
 
 const generateReferralLink = (referralCode) => {
-  const baseUrl = "http://https://bioopay.netlify.app/"; // Replace with your actual base URL
+  const baseUrl = "https://bioopay.online"; // Replace with your actual base URL
   return `${baseUrl}/register?referralCode=${referralCode}`;
 };
 
