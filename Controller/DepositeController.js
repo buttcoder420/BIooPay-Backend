@@ -5,8 +5,12 @@ import UserModel from "../Model/UserModel.js";
 // ✅ CREATE Deposit
 export const createDeposit = async (req, res) => {
   try {
-    const { planId, transactionId } = req.body;
+    const { planId, transactionId, image } = req.body; // ✅ image added
     const userId = req.user._id;
+
+    if (!image) {
+      return res.status(400).json({ message: "Image is required" });
+    }
 
     const plan = await PlaneModel.findById(planId);
     if (!plan) {
@@ -18,6 +22,7 @@ export const createDeposit = async (req, res) => {
       plan: plan._id,
       transactionId,
       amount: plan.price,
+      image, // ✅ Save image
     });
 
     await newDeposit.save();
