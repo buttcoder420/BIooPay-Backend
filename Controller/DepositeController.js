@@ -5,11 +5,26 @@ import UserModel from "../Model/UserModel.js";
 // ✅ CREATE Deposit
 export const createDeposit = async (req, res) => {
   try {
-    const { planId, transactionId, image } = req.body; // ✅ image added
+    // Get data from request body (including base64 image)
+    const { planId, transactionId, image } = req.body;
     const userId = req.user._id;
 
+    // Validation
     if (!image) {
-      return res.status(400).json({ message: "Image is required" });
+      return res
+        .status(400)
+        .json({ message: "Payment proof image is required" });
+    }
+    if (!planId) {
+      return res.status(400).json({ message: "Plan ID is required" });
+    }
+    if (!transactionId) {
+      return res.status(400).json({ message: "Transaction ID is required" });
+    }
+
+    // Validate base64 image
+    if (!image.match(/^data:image\/(png|jpeg|jpg);base64,/)) {
+      return res.status(400).json({ message: "Invalid image format" });
     }
 
     const plan = await PlaneModel.findById(planId);
@@ -22,18 +37,22 @@ export const createDeposit = async (req, res) => {
       plan: plan._id,
       transactionId,
       amount: plan.price,
-      image, // ✅ Save image
+      image, // Store base64 string directly
     });
 
     await newDeposit.save();
-    res.status(201).json({ message: "Deposit created", deposit: newDeposit });
+    res.status(201).json({
+      message: "Deposit created successfully",
+      deposit: newDeposit,
+    });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error creating deposit", error: error.message });
+    console.error("Deposit creation error:", error);
+    res.status(500).json({
+      message: "Error creating deposit",
+      error: error.message,
+    });
   }
 };
-
 // 🔁 UPDATE Deposit Status (with referral commission logic)
 export const updateDepositStatus = async (req, res) => {
   try {
